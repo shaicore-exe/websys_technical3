@@ -23,13 +23,13 @@
             <th>Action</th>
         </tr>
 
-        <?php foreach ($customers as $customer): ?>
+        <?php foreach ($customerList as $customerRecord): ?>
             <tr>
-                <td><?= esc($customer['id']) ?></td>
-                <td><?= esc($customer['full_name']) ?></td>
-                <td><?= esc($customer['email']) ?></td>
+                <td><?= esc($customerRecord['id']) ?></td>
+                <td><?= esc($customerRecord['full_name']) ?></td>
+                <td><?= esc($customerRecord['email']) ?></td>
                 <td>
-                    <a href="<?= site_url('customers/edit/' . $customer['id']) ?>">
+                    <a href="<?= site_url('customers/edit/' . $customerRecord['id']) ?>">
                         Edit
                     </a>
                 </td>

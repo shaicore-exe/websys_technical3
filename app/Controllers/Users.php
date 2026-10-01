@@ -10,103 +10,106 @@ class Users extends BaseController
 
     public function index()
     {
-        $userModel = new UserModel();
+        $model = new UserModel();
 
-        return view('users/index', [
-            'users' => $userModel->findAll()
+        return view('users/user_list', [
+            'userList' => $model->findAll()
         ]);
     }
 
-    public function new()
+    public function add()
     {
-        return view('users/new');
+        return view('users/add_user');
     }
 
-    public function create()
+    public function save()
     {
-        $rules = [
+        $validationRules = [
             'username'  => 'required|max_length[50]|is_unique[users.username]',
             'full_name' => 'required|max_length[100]'
         ];
 
-        if (!$this->validate($rules)) {
+        if (!$this->validate($validationRules)) {
             return redirect()
                 ->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
         }
 
-        $userModel = new UserModel();
+        $model = new UserModel();
 
-        $userModel->insert([
+        $newUser = [
             'username'  => $this->request->getPost('username'),
             'full_name' => $this->request->getPost('full_name')
-        ]);
+        ];
+
+        $model->insert($newUser);
 
         return redirect()
             ->to('/users')
             ->with('message', 'User added successfully.');
     }
+
     public function edit($id)
-{
-    $userModel = new UserModel();
-
-    return view('users/edit', [
-        'user' => $userModel->find($id)
-    ]);
-}
-
-    public function update($id)
     {
-        $rules = [
-            'username' => 'required|max_length[50]|is_unique[users.username,id,' . $id . ']',
+        $model = new UserModel();
+
+        return view('users/edit_user', [
+            'selectedUser' => $model->find($id)
+        ]);
+    }
+
+    public function saveChanges($id)
+    {
+        $validationRules = [
+            'username'  => 'required|max_length[50]|is_unique[users.username,id,' . $id . ']',
             'full_name' => 'required|max_length[100]'
         ];
 
-        if (!$this->validate($rules)) {
+        if (!$this->validate($validationRules)) {
             return redirect()
                 ->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
         }
 
-        $data = [
-            'username' => $this->request->getPost('username'),
+        $updatedUser = [
+            'username'  => $this->request->getPost('username'),
             'full_name' => $this->request->getPost('full_name')
         ];
 
-        $avatar = $this->request->getFile('avatar');
+        $profilePicture = $this->request->getFile('avatar');
 
-        if ($avatar->getError() !== UPLOAD_ERR_NO_FILE) {
-            $avatarRules = [
+        if ($profilePicture->getError() !== UPLOAD_ERR_NO_FILE) {
+            $uploadRules = [
                 'avatar' => 'uploaded[avatar]|max_size[avatar,2048]|is_image[avatar]|mime_in[avatar,image/jpg,image/jpeg,image/png]'
             ];
 
-            if (!$this->validate($avatarRules)) {
+            if (!$this->validate($uploadRules)) {
                 return redirect()
                     ->back()
                     ->withInput()
                     ->with('errors', $this->validator->getErrors());
             }
 
-            $newName = $avatar->getRandomName();
-            $temporaryName = 'original_' . $newName;
-            $uploadPath = FCPATH . 'uploads/avatars/';
+            $savedFileName = $profilePicture->getRandomName();
+            $originalFileName = 'original_' . $savedFileName;
+            $avatarFolder = FCPATH . 'uploads/avatars/';
 
-            $avatar->move($uploadPath, $temporaryName);
+            $profilePicture->move($avatarFolder, $originalFileName);
 
             service('image')
-                ->withFile($uploadPath . $temporaryName)
+                ->withFile($avatarFolder . $originalFileName)
                 ->fit(300, 300, 'center')
-                ->save($uploadPath . $newName);
+                ->save($avatarFolder . $savedFileName);
 
-            unlink($uploadPath . $temporaryName);
+            unlink($avatarFolder . $originalFileName);
 
-            $data['avatar'] = $newName;
+            $updatedUser['avatar'] = $savedFileName;
         }
 
-        $userModel = new UserModel();
-        $userModel->update($id, $data);
+        $model = new UserModel();
+        $model->update($id, $updatedUser);
 
         return redirect()
             ->to('/users')

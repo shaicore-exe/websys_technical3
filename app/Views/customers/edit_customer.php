@@ -16,7 +16,7 @@
     <?php endif; ?>
 
     <form
-        action="<?= site_url('customers/update/' . $customer['id']) ?>"
+        action="<?= site_url('customers/update/' . $selectedCustomer['id']) ?>"
         method="post"
     >
         <?= csrf_field() ?>
@@ -26,7 +26,7 @@
             <input
                 type="text"
                 name="full_name"
-                value="<?= old('full_name', $customer['full_name']) ?>"
+                value="<?= old('full_name', $selectedCustomer['full_name']) ?>"
             >
         </p>
 
@@ -35,7 +35,7 @@
             <input
                 type="text"
                 name="email"
-                value="<?= old('email', $customer['email']) ?>"
+                value="<?= old('email', $selectedCustomer['email']) ?>"
             >
         </p>
 

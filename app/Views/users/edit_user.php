@@ -16,7 +16,7 @@
     <?php endif; ?>
 
     <form
-        action="<?= site_url('users/update/' . $user['id']) ?>"
+        action="<?= site_url('users/update/' . $selectedUser['id']) ?>"
         method="post"
         enctype="multipart/form-data"
     >
@@ -27,7 +27,7 @@
             <input
                 type="text"
                 name="username"
-                value="<?= old('username', $user['username']) ?>"
+                value="<?= old('username', $selectedUser['username']) ?>"
             >
         </p>
 
@@ -36,7 +36,7 @@
             <input
                 type="text"
                 name="full_name"
-                value="<?= old('full_name', $user['full_name']) ?>"
+                value="<?= old('full_name', $selectedUser['full_name']) ?>"
             >
         </p>
 

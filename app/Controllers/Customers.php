@@ -10,75 +10,80 @@ class Customers extends BaseController
 
     public function index()
     {
-        $customerModel = new CustomerModel();
+        $model = new CustomerModel();
 
-        return view('customers/index', [
-            'customers' => $customerModel->findAll()
+        return view('customers/customer_list', [
+            'customerList' => $model->findAll()
         ]);
     }
 
-    public function new()
+    public function add()
     {
-        return view('customers/new');
+        return view('customers/add_customer');
     }
 
-    public function create()
+    public function save()
     {
-        $rules = [
+        $validationRules = [
             'full_name' => 'required|min_length[2]|max_length[100]',
             'email'     => 'required|valid_email|max_length[100]'
         ];
 
-        if (!$this->validate($rules)) {
+        if (!$this->validate($validationRules)) {
             return redirect()
                 ->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
         }
 
-        $customerModel = new CustomerModel();
+        $model = new CustomerModel();
 
-        $customerModel->insert([
+        $newCustomer = [
             'full_name' => $this->request->getPost('full_name'),
             'email'     => $this->request->getPost('email')
-        ]);
+        ];
+
+        $model->insert($newCustomer);
 
         return redirect()
             ->to('/customers')
             ->with('message', 'Customer added successfully.');
     }
+
     public function edit($id)
-{
-    $customerModel = new CustomerModel();
+    {
+        $model = new CustomerModel();
 
-    return view('customers/edit', [
-        'customer' => $customerModel->find($id)
-    ]);
-}
-
-public function update($id)
-{
-    $rules = [
-        'full_name' => 'required|min_length[2]|max_length[100]',
-        'email'     => 'required|valid_email|max_length[100]'
-    ];
-
-    if (!$this->validate($rules)) {
-        return redirect()
-            ->back()
-            ->withInput()
-            ->with('errors', $this->validator->getErrors());
+        return view('customers/edit_customer', [
+            'selectedCustomer' => $model->find($id)
+        ]);
     }
 
-    $customerModel = new CustomerModel();
+    public function saveChanges($id)
+    {
+        $validationRules = [
+            'full_name' => 'required|min_length[2]|max_length[100]',
+            'email'     => 'required|valid_email|max_length[100]'
+        ];
 
-    $customerModel->update($id, [
-        'full_name' => $this->request->getPost('full_name'),
-        'email'     => $this->request->getPost('email')
-    ]);
+        if (!$this->validate($validationRules)) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors());
+        }
 
-    return redirect()
-        ->to('/customers')
-        ->with('message', 'Customer updated successfully.');
+        $model = new CustomerModel();
+
+        $updatedCustomer = [
+            'full_name' => $this->request->getPost('full_name'),
+            'email'     => $this->request->getPost('email')
+        ];
+
+        $model->update($id, $updatedCustomer);
+
+        return redirect()
+            ->to('/customers')
+            ->with('message', 'Customer updated successfully.');
     }
 }

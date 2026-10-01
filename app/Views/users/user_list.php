@@ -25,14 +25,14 @@
             <th>Action</th>
         </tr>
 
-        <?php foreach ($users as $user): ?>
+        <?php foreach ($userList as $account): ?>
             <tr>
-                <td><?= esc($user['id']) ?></td>
+                <td><?= esc($account['id']) ?></td>
 
                 <td>
-                    <?php if ($user['avatar']): ?>
+                    <?php if ($account['avatar']): ?>
                         <img
-                            src="<?= base_url('uploads/avatars/' . $user['avatar']) ?>"
+                            src="<?= base_url('uploads/avatars/' . $account['avatar']) ?>"
                             width="80"
                             height="80"
                         >
@@ -45,11 +45,11 @@
                     <?php endif; ?>
                 </td>
 
-                <td><?= esc($user['username']) ?></td>
-                <td><?= esc($user['full_name']) ?></td>
+                <td><?= esc($account['username']) ?></td>
+                <td><?= esc($account['full_name']) ?></td>
 
                 <td>
-                    <a href="<?= site_url('users/edit/' . $user['id']) ?>">
+                    <a href="<?= site_url('users/edit/' . $account['id']) ?>">
                         Edit
                     </a>
                 </td>
